@@ -7,8 +7,8 @@
 
 //Time Server
 const char *ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 19800;
-const int daylightOffset_sec = 0;
+const long gmtOffset_sec = 0;
+const int daylightOffset_sec = 3600;
 
 //WiFi
 const char *ssid = SECRET_SSID;
@@ -119,10 +119,10 @@ void callback(char *topic, byte *payload, unsigned int length) {
     bool uploadSuccessful = uploadToGoogle(encodeData());
     if(uploadSuccessful){
       Serial.println("Successfully uploaded to Google");
+      Serial.flush();
     }
   }
   delay(1000);
-  Serial.flush();
 }
 
 bool addData(char *topic, char *data) {
@@ -197,7 +197,7 @@ bool uploadToGoogle(String encodedData) {
       return false;
     }
     char timeStringBuff[50];  //50 chars should be enough
-    strftime(timeStringBuff, sizeof(timeStringBuff), "%F %T", &timeinfo);
+    strftime(timeStringBuff, sizeof(timeStringBuff), "%F %T %Z", &timeinfo);
     String asString(timeStringBuff);
     asString.replace(" ", "%20");
     Serial.print("Time:");
